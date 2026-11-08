@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محلل درجات الطلاب المتعثرين</title>
+<style>
+body {
+ font-family: Arial;
+ background: #eef3f8;
+ padding: 20px;
+}
+.container {
+ max-width: 900px;
+ margin: auto;
+ background: white;
+ padding: 25px;
+ border-radius: 12px;
+}
+h1,h2 {
+ text-align: center;
+ color: #234567;
+}
+form {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 10px;
+ margin: 20px 0;
+}
+input,button {
+ padding: 12px;
+ border-radius: 6px;
+}
+input {
+ flex: 1;
+ border: 1px solid #ccc;
+}
+button {
+ background: #167d9a;
+ color: white;
+ border: none;
+}
+table {
+ width: 100%;
+ border-collapse: collapse;
+ margin-top: 15px;
+ text-align: center;
+}
+th,td {
+ border: 1px solid #ddd;
+ padding: 12px;
+}
+th {
+ background: #234567;
+ color: white;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>محلل درجات الطلاب المتعثرين</h1>
+
+<h2>إدخال بيانات الطالب</h2>
+<form id="studentForm">
+<input id="studentId" placeholder="رقم الطالب ID" required>
+<input type="number" id="average" placeholder="متوسط الدرجات Average" min="0" max="100" step="any" required>
+<button type="submit">إضافة الطالب</button>
+</form>
+
+<h2>قائمة الطلاب</h2>
+<table>
+<thead>
+<tr>
+<th>رقم الطالب</th>
+<th>المتوسط الأصلي</th>
+<th>المتوسط بعد الرأفة</th>
+</tr>
+</thead>
+<tbody id="studentsTable"></tbody>
+</table>
+
+<h2>الطلاب المتعثرون من 40 إلى 49</h2>
+<table>
+<thead>
+<tr>
+<th>رقم الطالب</th>
+<th>المتوسط الأصلي</th>
+<th>المتوسط الجديد</th>
+</tr>
+</thead>
+<tbody id="failedTable"></tbody>
+</table>
+</div>
+
+<script>
+let students = [];
+
+document.getElementById("studentForm").addEventListener("submit", function(e) {
+ e.preventDefault();
+
+ let id = document.getElementById("studentId").value.trim();
+ let avg = Number(document.getElementById("average").value);
+
+ if (!id || avg < 0 || avg > 100) {
+  alert("أدخلي بيانات صحيحة");
+  return;
+ }
+
+ if (students.some(s => s.id === id)) {
+  alert("رقم الطالب موجود بالفعل");
+  return;
+ }
+
+ students.push({
+  id: id,
+  average: avg,
+  newAverage: Math.min(avg + 5, 50)
+ });
+
+ displayStudents();
+ this.reset();
+});
+
+function displayStudents() {
+ let all = document.getElementById("studentsTable");
+ let failed = document.getElementById("failedTable");
+
+ all.innerHTML = "";
+ failed.innerHTML = "";
+
+ students.forEach(s => {
+  all.innerHTML += `<tr>
+  <td>${s.id}</td>
+  <td>${s.average}</td>
+  <td>${s.newAverage}</td>
+  </tr>`;
+ });
+
+ students.filter(s => s.average >= 40 && s.average <= 49)
+ .forEach(s => {
+  failed.innerHTML += `<tr>
+  <td>${s.id}</td>
+  <td>${s.average}</td>
+  <td>${s.newAverage}</td>
+  </tr>`;
+ });
+}
+</script>
+</body>
+</html>
